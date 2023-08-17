@@ -31,7 +31,7 @@ async function searchActions(queryParam) {
             resolve(actions);
 
         } catch (error) {
-            console.error('Erro ao realziar search de ações:', error);
+            console.error('Error at search actions:', error);
             reject(error);
 
         } finally {

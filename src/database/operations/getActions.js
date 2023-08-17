@@ -12,18 +12,15 @@ async function getActions() {
         try {
             await client.connect();
             
-            const database1 = client.db('categories');
-            const database2 = client.db('actions');
-            const collectionCategories = database1.collection('categories');
-            const collectionActions = database2.collection('actions');
+            const database = client.db('actions');
+            const collectionActions = database.collection('actions');
 
-            const result1 = await collectionCategories.find().toArray();
-            const result2 = await collectionActions.find().toArray();
+            const result = await collectionActions.find().toArray();
    
-            resolve({categories: result1, actions: result2});
+            resolve(result);
 
         } catch (error) {
-            console.error('Erro ao buscar ações:', error);
+            console.error('Error on get actions:', error);
             reject(error);
 
         } finally {

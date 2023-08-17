@@ -5,9 +5,9 @@ const msg_env = require('./config/envTelegram');
 
 const variationsController = require('./controllers/variationsController');
 const loginTradeMapController = require('./controllers/loginTradeMapController');
-const teste = require('./routes/actiosYahoo');
 
 const insertClients = require('./database/operations/insertClients');
+const getActions = require('./database/operations/getActions');
 
 const bot = new Telegraf(msg_env.Credentials.token);
 // const telegram = require('./helpers/telegram');
@@ -91,31 +91,37 @@ router.post('/client', async (req, res) => {
   insertNewClients();
 });
 
-// INITIAL PAGE
+// GET ALL ACTIVES
+router.get('/allActives', async (req, res) => {
+  async function getAllActions() {
+
+    try {
+      const resultOpGetActions = await getActions();
+
+      // console.log("resultOpGetActions: ", resultOpGetActions);
+
+      if (resultOpGetActions && resultOpGetActions.length > 0) {
+        return res.json({ 
+          status: 200, 
+          actives: resultOpGetActions,
+          message: "Get all actions ok" 
+        });
+      } else {
+        return res.json({ 
+          status: 500, 
+          message: "Error on get all actions" 
+        });
+      }
+
+    } catch (error) {
+      console.log("Error at getAllActions: ", error);
+    }
+  }
+
+  getAllActions();
+});
+
 router.get('/teste', async (req, res) => {
-
-//   const yahooFinance = require('yahoo-finance');
-
-// // Símbolo da ação da B3 que você deseja obter os dados
-// const symbol = 'PETR4.SA'; // Exemplo: ação da Petrobras
-
-// // Configura as opções de busca
-// const options = {
-//   symbols: [symbol],
-//   modules: ['price', 'summaryDetail']
-// };
-
-// // Realiza a busca dos dados das ações
-// yahooFinance.quote(options)
-//   .then(response => {
-//     const data = response[symbol];
-//     // Processa os dados conforme necessário
-//     console.log(data);
-//   })
-//   .catch(error => {
-//     console.error('Erro ao obter os dados das ações da B3:', error);
-//   });
-
 
 });
 

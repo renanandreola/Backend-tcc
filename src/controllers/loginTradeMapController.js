@@ -25,7 +25,7 @@ async function requestLoginTradeMap() {
                 resolve(variations);
             }
         } catch (error) {
-            console.error('error at controller login: ', error);
+            console.error('Error at controller login: ', error);
             reject(error);
         }
     })
