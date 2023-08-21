@@ -8,6 +8,7 @@ const loginTradeMapController = require('./controllers/loginTradeMapController')
 
 const insertClients = require('./database/operations/insertClients');
 const getActions = require('./database/operations/getActions');
+const searchActions = require('./database/operations/searchActions');
 
 const bot = new Telegraf(msg_env.Credentials.token);
 // const telegram = require('./helpers/telegram');
@@ -121,8 +122,44 @@ router.get('/allActives', async (req, res) => {
   getAllActions();
 });
 
-router.get('/teste', async (req, res) => {
+// SEARCH ACTIONS
+router.post('/searchResults', (req, res) => {
+  async function searchActionsOp() {
+    try {
+      // console.log("req.body", req.body);
+      const resultOpSearchActions = await searchActions(req.body.searchTerm);
 
+      console.log("resultOpSearchActions: ", resultOpSearchActions);
+
+      if (resultOpSearchActions && resultOpSearchActions.length > 0) {
+        return res.json({ 
+          status: 200, 
+          results: resultOpSearchActions,
+          message: "searchActionsOp ok" 
+        });
+      } else {
+        return res.json({ 
+          status: 400,
+          message: "searchActionsOp no results"
+        });
+      }
+
+    } catch (error) {
+      console.log("Error at searchActionsOp: ", error);
+    }
+  }
+
+  searchActionsOp();
+//   const query = req.query.q;
+//   let cond = [];
+//   let queryObj = {};
+
+//   if (query && query.length > 0) {
+//     queryObj = {"name": { "$regex": query, "$options": "i" }};
+//   }
+//   Actions.find(queryObj).sort([cond]).exec((err, products) => {
+//      res.render('products.html', {products: products, q: query});
+//  });
 });
 
 bot.launch();
