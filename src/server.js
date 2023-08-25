@@ -10,6 +10,8 @@ const insertClients = require('./database/operations/insertClients');
 const getActions = require('./database/operations/getActions');
 const searchActions = require('./database/operations/searchActions');
 
+const getTickerPrice = require('./routes/getTickerPrice');
+
 const bot = new Telegraf(msg_env.Credentials.token);
 // const telegram = require('./helpers/telegram');
 
@@ -22,7 +24,7 @@ bot.on('message', (ctx) => {
     console.log(ctx.message);
 
     let name = ctx.message.from.first_name;
-    ctx.reply('Fala ' + name + ', ainda não estou pronto mas logo mais chamo vc!');
+    ctx.reply('Olá, ainda não estou pronto mas logo mais chamo vc!');
 });
 
 // Testing chatterbot route
@@ -150,16 +152,36 @@ router.post('/searchResults', (req, res) => {
   }
 
   searchActionsOp();
-//   const query = req.query.q;
-//   let cond = [];
-//   let queryObj = {};
+});
 
-//   if (query && query.length > 0) {
-//     queryObj = {"name": { "$regex": query, "$options": "i" }};
-//   }
-//   Actions.find(queryObj).sort([cond]).exec((err, products) => {
-//      res.render('products.html', {products: products, q: query});
-//  });
+// GET ALL ACTIVES
+router.post('/tickerPrice', async (req, res) => {
+  async function tickerPrice() {
+
+    try {
+      const resultTicker = await getTickerPrice();
+
+      // console.log("resultOpGetActions: ", resultOpGetActions);
+
+      // if (resultOpGetActions && resultOpGetActions.length > 0) {
+      //   return res.json({ 
+      //     status: 200, 
+      //     actives: resultOpGetActions,
+      //     message: "Get all actions ok" 
+      //   });
+      // } else {
+      //   return res.json({ 
+      //     status: 500, 
+      //     message: "Error on get all actions" 
+      //   });
+      // }
+
+    } catch (error) {
+      console.log("Error at tickerPrice: ", error);
+    }
+  }
+
+  tickerPrice();
 });
 
 bot.launch();
