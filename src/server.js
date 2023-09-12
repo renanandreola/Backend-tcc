@@ -3,6 +3,8 @@ const router = express.Router();
 const { Telegraf } = require('telegraf');
 const msg_env = require('./config/envTelegram');
 const { spawn } = require('child_process');
+const yahooFinance = require('yahoo-finance');
+const moment = require('moment');
 
 const variationsController = require('./controllers/variationsController');
 const loginTradeMapController = require('./controllers/loginTradeMapController');
@@ -224,6 +226,39 @@ router.post('/chart', async (req, res) => {
     console.log("Error at chartInfo: ", error);
     return res.status(500).json({ status: 500, message: "Erro interno do servidor" });
   }
+});
+
+// GET CHART INFO
+router.post('/chart2', async (req, res) => {  
+  async function getStockHistoricalData(symbol) {
+    const endDate = moment().format('YYYY-MM-DD');
+    const startDate = moment().subtract(1, 'years').format('YYYY-MM-DD'); // 2 anos atrás
+  
+    try {
+      const data = await yahooFinance.historical({
+        symbol: symbol,
+        from: startDate,
+        to: endDate,
+      });
+  
+      return data;
+    } catch (error) {
+      console.error('Erro ao obter dados históricos de ações:', error);
+      throw error;
+    }
+  }
+  
+  const symbol = `${req.body.code}.SA`; // Símbolo da ação na B3
+  getStockHistoricalData(symbol)
+    .then((data) => {
+      console.log(data);
+      return res.json({ status: 200, prices: data, message: "chart ok" });
+    })
+    .catch((error) => {
+      console.error('Erro:', error);
+      return res.json({ status: 400, error: error, message: "chart ok" });
+    });
+  
 });
 
 
