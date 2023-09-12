@@ -1,28 +1,35 @@
 const axios = require('axios');
-var request = require('request');
-const alpha = require('alphavantage')({ key: 'C2AKWGVXTRCJCP8T' });
+const cheerio = require('cheerio');
 // C2AKWGVXTRCJCP8T
-const getTickerPrice = async () => {
+
+const getTickerPrice = async (code) => {
     return new Promise(async (resolve, reject) => {
+        const url = `https://www.fundamentus.com.br/detalhes.php?papel=${code}`;
 
-        // replace the "demo" apikey below with your own key from https://www.alphavantage.co/support/#api-key
-        var url = 'https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=GFSA3.SA&interval=5min&apikey=C2AKWGVXTRCJCP8T';
-
-        request.get({
-            url: url,
-            json: true,
-            headers: {'User-Agent': 'request'}
-        }, (err, res, data) => {
-            if (err) {
-            console.log('Error:', err);
-            } else if (res.statusCode !== 200) {
-            console.log('Status:', res.statusCode);
+        try {
+            const response = await axios.get(url);
+            const $ = cheerio.load(response.data);
+            const dataDestaqueElement = $('.data.destaque.w3');
+        
+            if (dataDestaqueElement.length > 0) {
+                const dataDestaqueText = dataDestaqueElement.text();
+                console.log('Valor do ativo:', dataDestaqueText);
+                resolve({
+                    status: 200,
+                    price: dataDestaqueText
+                });
             } else {
-            // data is successfully parsed as a JSON object:
-            console.log(data);
+                console.log('Classe não encontrada.');
+                reject({
+                    status: 400
+                });
             }
-        });
-
+        } catch (error) {
+            console.error('Erro ao acessar a URL:', error);
+            reject({
+                status: 400
+            });
+        }
     });
 }
 
