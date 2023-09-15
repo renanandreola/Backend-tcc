@@ -13,7 +13,7 @@ const getTickerPrice = async (code) => {
         
             if (dataDestaqueElement.length > 0) {
                 const dataDestaqueText = dataDestaqueElement.text();
-                console.log('Valor do ativo:', dataDestaqueText);
+                // console.log('Valor do ativo:', dataDestaqueText);
                 resolve({
                     status: 200,
                     price: dataDestaqueText
