@@ -15,6 +15,7 @@ const searchActions = require('./database/operations/searchActions');
 
 const getTickerPrice = require('./routes/getTickerPrice');
 const getTickerInfo = require('./routes/getTickerInfo');
+const getCalendarData = require('./routes/getCalendarData');
 
 const bot = new Telegraf(msg_env.Credentials.token);
 // const telegram = require('./helpers/telegram');
@@ -210,6 +211,34 @@ router.post('/tickerInfo', async (req, res) => {
   }
 
   tickerInfo();
+});
+
+// GET TICKER INFO
+router.post('/getCalendarData', async (req, res) => {
+  async function calendarData() {
+
+    try {
+      const resultData = await getCalendarData(req.body.code);
+
+      if (resultData.status == 200) {
+        return res.json({ 
+          status: 200, 
+          info: resultData.info,
+          message: "Get calendar data info ok" 
+        });
+      } else {
+        return res.json({ 
+          status: 500, 
+          message: "Error on get calendar data info" 
+        });
+      }
+
+    } catch (error) {
+      console.log("Error at getCalendarData: ", error);
+    }
+  }
+
+  calendarData();
 });
 
 
