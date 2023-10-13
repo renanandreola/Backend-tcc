@@ -5,6 +5,7 @@ const msg_env = require('./config/envTelegram');
 const { spawn } = require('child_process');
 const yahooFinance = require('yahoo-finance');
 const moment = require('moment');
+const jwt = require('jsonwebtoken');
 
 const variationsController = require('./controllers/variationsController');
 const loginTradeMapController = require('./controllers/loginTradeMapController');
@@ -16,6 +17,8 @@ const searchActions = require('./database/operations/searchActions');
 const getTickerPrice = require('./routes/getTickerPrice');
 const getTickerInfo = require('./routes/getTickerInfo');
 const getCalendarData = require('./routes/getCalendarData');
+
+const loginClients = require('./database/operations/loginClients');
 
 const bot = new Telegraf(msg_env.Credentials.token);
 // const telegram = require('./helpers/telegram');
@@ -223,7 +226,7 @@ router.post('/getCalendarData', async (req, res) => {
       if (resultData.status == 200) {
         return res.json({ 
           status: 200, 
-          info: resultData.info,
+          info: resultData,
           message: "Get calendar data info ok" 
         });
       } else {
@@ -315,6 +318,38 @@ router.post('/chart', async (req, res) => {
   
 });
 
+router.post('/login', (req, res) => {
+  async function makeLogin() {
+    try {
+      const resultOpLoginClients = await loginClients(req.body);
+
+      if (resultOpLoginClients && resultOpLoginClients._id) {
+        const secretKey = 'suaChaveSecretaSuperSecreta';
+        const userData = {
+          userId: resultOpLoginClients._id,
+          username: req.body.email,
+        };
+
+        const token = jwt.sign(userData, secretKey);
+
+        res.send({
+          status: 200,
+          token: token,
+          email: req.body.email
+        });
+      } else {
+        res.send({
+          status: 500
+        });
+      }
+
+    } catch (error) {
+      console.log("Error at makeLogin: ", error);
+    }
+  }
+
+  makeLogin();
+});
 
 bot.launch();
 
