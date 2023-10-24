@@ -11,7 +11,10 @@ const variationsController = require('./controllers/variationsController');
 const loginTradeMapController = require('./controllers/loginTradeMapController');
 
 const insertClients = require('./database/operations/insertClients');
+const insertFavorites = require('./database/operations/insertFavorites');
 const getActions = require('./database/operations/getActions');
+const getFavs = require('./database/operations/getFavorites');
+const removeFavs = require('./database/operations/removeFavorite');
 const searchActions = require('./database/operations/searchActions');
 
 const getTickerPrice = require('./routes/getTickerPrice');
@@ -318,6 +321,7 @@ router.post('/chart', async (req, res) => {
   
 });
 
+// LOGIN
 router.post('/login', (req, res) => {
   async function makeLogin() {
     try {
@@ -349,6 +353,91 @@ router.post('/login', (req, res) => {
   }
 
   makeLogin();
+});
+
+// FAVORITES
+router.post('/favorite', async (req, res) => {
+  async function insertFavorite() {
+    console.log(req.body);
+    try {
+      const resultOpNewFavorites = await insertFavorites(req.body);
+
+      if (resultOpNewFavorites && resultOpNewFavorites.insertedId) {
+        res.send({
+          status: 200
+        });
+      } else {
+        res.send({
+          status: 500
+        });
+      }
+
+    } catch (error) {
+      console.log("Error at insertFavorite: ", error);
+    }
+  }
+
+  insertFavorite();
+});
+
+// GET ALL ACTIVES
+router.post('/getFavorites', async (req, res) => {
+  async function getAllFavorites() {
+    console.log(req.body);
+    try {
+      const resultOpGetFavorites = await getFavs(req.body);
+
+      console.log("resultOpGetFavorites: ", resultOpGetFavorites);
+
+      if (resultOpGetFavorites && resultOpGetFavorites.length > 0) {
+        return res.json({ 
+          status: 200, 
+          favorites: resultOpGetFavorites,
+          message: "Get all favorites ok" 
+        });
+      } else {
+        return res.json({ 
+          status: 500, 
+          message: "Error on get all favorites" 
+        });
+      }
+
+    } catch (error) {
+      console.log("Error at getAllFavorites: ", error);
+    }
+  }
+
+  getAllFavorites();
+});
+
+// REMOVE FAVORITE
+router.post('/removeFavorite', async (req, res) => {
+  async function removeFavorite() {
+    console.log(req.body);
+    try {
+      const resultOpRemoveFavorite = await removeFavs(req.body);
+
+      console.log("resultOpRemoveFavorite: ", resultOpRemoveFavorite);
+
+      if (resultOpRemoveFavorite && resultOpRemoveFavorite.deletedCount == 1) {
+        return res.json({ 
+          status: 200, 
+          favorites: resultOpRemoveFavorite,
+          message: "Remove favorite ok" 
+        });
+      } else {
+        return res.json({ 
+          status: 500, 
+          message: "Error on remove favorite" 
+        });
+      }
+
+    } catch (error) {
+      console.log("Error at removeFavorite: ", error);
+    }
+  }
+
+  removeFavorite();
 });
 
 bot.launch();
