@@ -23,12 +23,10 @@ async function insertChat(newChat) {
 
             const result = await collection.insertOne(chat);
             
-            console.log('chat saved with success:', result.insertedId);
-            
             resolve(result);
 
         } catch (error) {
-            console.error('Error on save chat:', error);
+            console.log('Error on save chat: ', error);
             reject(error);
 
         } finally {

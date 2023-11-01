@@ -9,7 +9,6 @@ const jwt = require('jsonwebtoken');
 
 const variationsController = require('./controllers/variationsController');
 const loginTradeMapController = require('./controllers/loginTradeMapController');
-
 const insertClients = require('./database/operations/insertClients');
 const insertFavorites = require('./database/operations/insertFavorites');
 const getActions = require('./database/operations/getActions');
@@ -18,11 +17,9 @@ const getChat = require('./database/operations/getChat');
 const addChat = require('./database/operations/addChatInfo');
 const removeFavs = require('./database/operations/removeFavorite');
 const searchActions = require('./database/operations/searchActions');
-
 const getTickerPrice = require('./routes/getTickerPrice');
 const getTickerInfo = require('./routes/getTickerInfo');
 const getCalendarData = require('./routes/getCalendarData');
-
 const loginClients = require('./database/operations/loginClients');
 
 const bot = new Telegraf(msg_env.Credentials.token);
@@ -36,9 +33,9 @@ bot.hears('hi', (ctx) => ctx.reply('Hey there'));
 bot.on('message', async (ctx) => {
   console.log(ctx.message);
 
-  const resultOpGetChat = await getChat(ctx.chat.id);
+  const resultOpGetChat = await getChat(ctx.chat.id, 'botMessage');
 
-    console.log("resultOpGetChat: ", resultOpGetChat);
+    console.log("Buscando chat: ", resultOpGetChat);
 
   if (resultOpGetChat && resultOpGetChat.length > 0) {
     console.log("Chat já salvo");
@@ -49,29 +46,19 @@ bot.on('message', async (ctx) => {
     }
     const resultOpInsertChat = await addChat(data);
 
-    console.log("resultOpInsertChat: ", resultOpInsertChat);
+    console.log("Adicionando chat: ", resultOpInsertChat);
 
     if (resultOpInsertChat && resultOpInsertChat.insertedId) {
       console.log("Chat adicionado com sucesso");
     }
   }
-
     // let name = ctx.message.from.first_name;
     // ctx.reply('Olá, ainda não estou pronto mas logo mais chamo vc!');
 });
 
-
-
-
-
-
-
-
-
-// Testing chatterbot route
+// TESTING CHATTERBOT ROUTE
 router.get("/testing", async (req, res) => {
     console.log("Chatterbot test routing in running!");
-    // bot.telegram.sendMessage(msg_env.Credentials.chat_id, "Chatterbot test routing in running!");
 
     return res.json({ 
         status: 200, 
@@ -100,10 +87,7 @@ router.get('/actives', (req, res) => {
                 status: 200, 
                 response: loginWithVariations 
             });
-        } 
-        // else {
-        //   res.render('index.html');
-        // }
+        }
       }
     }
   
@@ -113,7 +97,7 @@ router.get('/actives', (req, res) => {
 // CLIENTS
 router.post('/client', async (req, res) => {
   async function insertNewClients() {
-    console.log(req.body);
+    console.log("Cadastrando novo cliente: ", req.body);
     try {
       const resultOpNewClients = await insertClients(req.body);
 
@@ -142,8 +126,6 @@ router.get('/allActives', async (req, res) => {
     try {
       const resultOpGetActions = await getActions();
 
-      // console.log("resultOpGetActions: ", resultOpGetActions);
-
       if (resultOpGetActions && resultOpGetActions.length > 0) {
         return res.json({ 
           status: 200, 
@@ -169,7 +151,6 @@ router.get('/allActives', async (req, res) => {
 router.post('/searchResults', (req, res) => {
   async function searchActionsOp() {
     try {
-      // console.log("req.body", req.body);
       const resultOpSearchActions = await searchActions(req.body.searchTerm);
 
       if (resultOpSearchActions && resultOpSearchActions.length > 0) {
@@ -226,12 +207,9 @@ router.post('/tickerInfoJustPrice', async (req, res) => {
   async function tickerInfoJustPrice() {
 
     try {
-      
-      console.log("req.body", req.body.codes);
       let arrayPrices = [];
       
       for(code of req.body.codes) {
-        
         const resultTicker = await getTickerInfo(code);
         
         if (resultTicker.status == 200) {
@@ -245,12 +223,12 @@ router.post('/tickerInfoJustPrice', async (req, res) => {
         return res.json({ 
           status: 200, 
           prices: arrayPrices,
-          message: "Get ticker price ok" 
+          message: "Get ticker just price ok" 
         });
       } else {
         return res.json({ 
           status: 500, 
-          message: "Error on get ticker price" 
+          message: "Error on get ticker just price" 
         });
       }
 
@@ -267,7 +245,6 @@ router.post('/tickerPriceArray', async (req, res) => {
   async function tickerPriceArray() {
 
     try {
-      console.log("req.body", req.body.codes);
       let arrayPrices = [];
 
       for(code of req.body.codes) {
@@ -285,12 +262,12 @@ router.post('/tickerPriceArray', async (req, res) => {
         return res.json({ 
           status: 200, 
           prices: arrayPrices,
-          message: "Get ticker price ok" 
+          message: "Get ticker price array ok" 
         });
       } else {
         return res.json({ 
           status: 500, 
-          message: "Error on get ticker price" 
+          message: "Error on get ticker price array" 
         });
       }
 
@@ -358,12 +335,11 @@ router.post('/getCalendarData', async (req, res) => {
   calendarData();
 });
 
-
 // GET PJ INFO
 router.get('/getBestPj', async (req, res) => {
   async function pjInfo() {
     return new Promise((resolve, reject) => {
-      const pythonFileName = 'teste.py';
+      const pythonFileName = 'bestPj.py';
       const pythonArgs = ['arg1', 'arg2'];
       const pythonProcess = spawn('python', [pythonFileName, ...pythonArgs]);
 
@@ -371,7 +347,6 @@ router.get('/getBestPj', async (req, res) => {
 
       pythonProcess.stdout.on('data', (data) => {
         jsonData += data;
-        // console.log("data", data);
       });
 
       pythonProcess.stderr.on('data', (data) => {
@@ -392,7 +367,7 @@ router.get('/getBestPj', async (req, res) => {
 
   try {
     const jsonResult = await pjInfo();
-    console.log("jsonResult", jsonResult);
+    console.log("jsonResult PHYTON", jsonResult);
     return res.json({ status: 200, results: jsonResult, message: "Best PJ ok" });
   } catch (error) {
     console.log("Error at pjInfo: ", error);
@@ -420,10 +395,9 @@ router.post('/chart', async (req, res) => {
     }
   }
   
-  const symbol = `${req.body.code}.SA`; // Símbolo da ação na B3
+  const symbol = `${req.body.code}.SA`;
   getStockHistoricalData(symbol)
     .then((data) => {
-      console.log(data);
       return res.json({ status: 200, prices: data, message: "chart ok" });
     })
     .catch((error) => {
@@ -451,7 +425,8 @@ router.post('/login', (req, res) => {
         res.send({
           status: 200,
           token: token,
-          email: req.body.email
+          email: req.body.email,
+          name: resultOpLoginClients.name
         });
       } else {
         res.send({
@@ -470,7 +445,7 @@ router.post('/login', (req, res) => {
 // CREATE FAVORITE
 router.post('/favorite', async (req, res) => {
   async function insertFavorite() {
-    console.log(req.body);
+    console.log("Inserindo favorito: ", req.body);
     try {
       const resultOpNewFavorites = await insertFavorites(req.body);
 
@@ -495,11 +470,9 @@ router.post('/favorite', async (req, res) => {
 // GET ALL FAVORITES
 router.post('/getFavorites', async (req, res) => {
   async function getAllFavorites() {
-    console.log(req.body);
+
     try {
       const resultOpGetFavorites = await getFavs(req.body);
-
-      // console.log("resultOpGetFavorites: ", resultOpGetFavorites);
 
       if (resultOpGetFavorites && resultOpGetFavorites.length > 0) {
         return res.json({ 
@@ -525,12 +498,11 @@ router.post('/getFavorites', async (req, res) => {
 // GET FAVORITE CALENDAR
 router.post('/getFavoritesCalendar', async (req, res) => {
   async function getFavoritesCalendar() {
-    // console.log(req.body);
+
     try {
       const resultOpGetFavorites = await getFavs(req.body);
 
       if (resultOpGetFavorites && resultOpGetFavorites.length > 0) {
-        // console.log("renan: ", resultOpGetFavorites);
 
         async function processElements() {
           const arrayLinks = [];
@@ -547,13 +519,11 @@ router.post('/getFavoritesCalendar', async (req, res) => {
         
           try {
             await Promise.all(promises);
-            // console.log("arrayLinks: ", arrayLinks);
             
             const mergedArray = arrayLinks.reduce((accumulator, currentArray) => {
               return accumulator.concat(currentArray);
             }, []);
             
-            // console.log("mergedArray", mergedArray.length);
             return mergedArray;
 
           } catch (error) {
@@ -565,9 +535,7 @@ router.post('/getFavoritesCalendar', async (req, res) => {
           }
         }
         
-        // Chame a função passando o seu array resultOpGetFavorites.
         var teste = await processElements();
-        // console.log("teste: ", teste);
 
         return res.json({ 
           status: 200, 
@@ -592,11 +560,9 @@ router.post('/getFavoritesCalendar', async (req, res) => {
 // REMOVE FAVORITE
 router.post('/removeFavorite', async (req, res) => {
   async function removeFavorite() {
-    console.log(req.body);
+
     try {
       const resultOpRemoveFavorite = await removeFavs(req.body);
-
-      console.log("resultOpRemoveFavorite: ", resultOpRemoveFavorite);
 
       if (resultOpRemoveFavorite && resultOpRemoveFavorite.deletedCount == 1) {
         return res.json({ 

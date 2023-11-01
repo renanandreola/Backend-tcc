@@ -22,7 +22,7 @@ async function removeFavorite(favoriteId) {
             resolve(result);
 
         } catch (error) {
-            console.error('Erro ao remover favorito:', error);
+            console.log('Erro ao remover favorito: ', error);
             reject(error);
 
         } finally {

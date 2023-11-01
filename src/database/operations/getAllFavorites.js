@@ -16,17 +16,11 @@ async function getAllFavorites() {
             const collection = database.collection('favorites');
 
             const result = await collection.find().toArray();
-
-            // const cursor = collection.find({
-            //     'userEmail': favorite.userEmail
-            // });
-
-            // const result = await cursor.toArray();
             
             resolve(result);
 
         } catch (error) {
-            console.error('Erro ao buscar favoritos:', error);
+            console.log('Erro ao buscar favoritos: ', error);
             reject(error);
 
         } finally {

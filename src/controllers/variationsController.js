@@ -19,7 +19,7 @@ async function getPromiseVariations() {
 
             resolve(variations);
         } catch (error) {
-            console.error('error at controller: ', error);
+            console.log('Error at controller variationsController: ', error);
             reject(error);
         }
     })

@@ -29,21 +29,15 @@ const getCalendarData = async (code) => {
                             downloadLink: downloadLink
                         }
                     )
-                    // console.log('Data:', data);
-                    // console.log('Link de Exibir:', exibirLink);
-                    // console.log('Link de Download:', downloadLink);
                 });
 
                 dataLinks.shift();
-
-                // console.log("dataLinks: ", dataLinks);
-                // console.log("dataLinks: ", dataLinks.length);
 
                 resolve({
                     dataLinks
                 });
             } else {
-                console.log('Classe não encontrada.');
+                console.log('Classe não encontrada para eventos.');
                 reject({
                     status: 400
                 });

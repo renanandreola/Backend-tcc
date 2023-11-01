@@ -5,7 +5,6 @@ async function requestLoginTradeMap() {
     return new Promise(async (resolve, reject) => {
         try {
             const makeLogin = await login()
-            // console.log("Makelogin", makeLogin);
 
             if (makeLogin.success) {
                 const resultado = await upsAndDownsB3();
@@ -25,7 +24,7 @@ async function requestLoginTradeMap() {
                 resolve(variations);
             }
         } catch (error) {
-            console.error('Error at controller login: ', error);
+            console.log('Error at controller login: ', error);
             reject(error);
         }
     })

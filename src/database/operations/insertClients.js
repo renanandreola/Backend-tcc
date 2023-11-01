@@ -26,12 +26,10 @@ async function insertClients(newClient) {
 
             const result = await collection.insertOne(user);
             
-            console.log('User saved with success:', result.insertedId);
-            
             resolve(result);
 
         } catch (error) {
-            console.error('Error on save user:', error);
+            console.log('Error on save user: ', error);
             reject(error);
 
         } finally {

@@ -24,7 +24,7 @@ async function loginClients(loginInfo) {
             resolve(result);
 
         } catch (error) {
-            console.error('Erro ao realizar login:', error);
+            console.log('Erro ao realizar login: ', error);
             reject(error);
 
         } finally {

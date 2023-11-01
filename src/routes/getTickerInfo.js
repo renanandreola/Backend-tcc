@@ -43,7 +43,7 @@ const getTickerInfo = async (code) => {
                     info: data
                 });
             } else {
-                console.log('Classe não encontrada.');
+                console.log('Classe não encontrada para calcular preço justo.');
                 reject({
                     status: 400
                 });

@@ -11,8 +11,6 @@ async function searchActions(searchTerm) {
 
         try {
             await client.connect();
-            
-            console.log("query", searchTerm);
 
             const database = client.db('actions');
             const collectionActions = database.collection('actions');
@@ -36,7 +34,7 @@ async function searchActions(searchTerm) {
             resolve(actions);
 
         } catch (error) {
-            console.error('Error at search actions:', error);
+            console.log('Error at search actions: ', error);
             reject(error);
 
         } finally {

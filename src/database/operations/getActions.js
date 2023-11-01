@@ -20,7 +20,7 @@ async function getActions() {
             resolve(result);
 
         } catch (error) {
-            console.error('Error on get actions:', error);
+            console.log('Error on get actions: ', error);
             reject(error);
 
         } finally {

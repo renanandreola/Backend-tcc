@@ -24,7 +24,7 @@ async function getFavorites(favorite) {
             resolve(result);
 
         } catch (error) {
-            console.error('Erro ao buscar favoritos:', error);
+            console.log('Erro ao buscar favoritos:', error);
             reject(error);
 
         } finally {

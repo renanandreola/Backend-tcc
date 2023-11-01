@@ -23,12 +23,10 @@ async function insertFavorites(newFavorite) {
 
             const result = await collection.insertOne(favorite);
             
-            console.log('Favorite saved with success:', result.insertedId);
-            
             resolve(result);
 
         } catch (error) {
-            console.error('Error on save favorite:', error);
+            console.log('Error on save favorite: ', error);
             reject(error);
 
         } finally {
